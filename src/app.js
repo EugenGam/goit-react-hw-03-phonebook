@@ -47,14 +47,11 @@ class App extends Component {
   };
 
   componentDidMount() {
-    console.log('ОТРИСОВАЛ');
     const localContacts = JSON.parse(localStorage.getItem('contacts'));
     this.setState({ contacts: localContacts });
-    console.log(localContacts);
   }
 
   componentDidUpdate() {
-    console.log('ПОМЕНЯЛСЯ');
     localStorage.clear();
     localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
   }
