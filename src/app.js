@@ -1,89 +1,75 @@
 import React, { Component } from 'react';
-import Searchbar from './Components/Searchbar';
-import ImageGallery from './Components/ImageGallery';
-import Loader from './Components/Loader';
-import Button from './Components/Button';
 import './sass/main.scss';
-import './styles.scss';
-import axios from 'axios';
-import Modal from './Components/Modal';
-
-let perPage = 12;
-const apiKey = '16377797-6d9ebd48227d507be381d4be6';
-let ScrollHeight = 0;
+import Contact from './Components/Contact';
+import Filter from './Components/Filter';
+import InputForm from './Components/InputForm';
+import { v1 as uuidv1 } from 'uuid';
+let key = '';
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      find: '',
-      isLoading: false,
-      items: [],
-      modalIsVisible: false,
-      modalImage: '',
+      contacts: [],
+      filter: '',
     };
   }
-  handleSubmit = (finder, e) => {
-    e.preventDefault();
-    this.setState({ find: finder, items: [] });
+
+  handleDelete = key => {
+    const newContacts = this.state.contacts.filter(el => el.id !== key);
+    this.setState({ contacts: newContacts });
   };
 
-  apiService = () => {
-    this.setState({ isLoading: true });
-    axios
-      .get(
-        `https://pixabay.com/api/?q=${this.state.find}&page=1&key=${apiKey}&image_type=photo&orientation=horizontal&per_page=${perPage}`,
-      )
-      .then(response => this.setState({ items: response.data.hits }))
-      .catch(error => console.error(error))
-      .finally(() => this.setState({ isLoading: false }));
+  getKey = () => {
+    return (key = uuidv1());
   };
 
-  handleOpen = largeImage => {
-    this.setState({ modalIsVisible: true, modalImage: largeImage });
+  checkContact = (array, name) => {
+    return array.find(element => element.nam === name);
   };
 
-  handleClose = () => {
-    this.setState({ modalIsVisible: false });
+  handleFilter = valueToFind => {
+    this.setState({ filter: valueToFind });
+  };
+  handleSubmit = (event, name, number) => {
+    this.getKey();
+    event.preventDefault();
+    if (this.checkContact(this.state.contacts, name) === undefined) {
+      if (name !== '' && number !== '') {
+        this.setState({
+          contacts: [
+            ...this.state.contacts,
+            { nam: name, id: key, number: number },
+          ],
+        });
+      }
+    } else return alert(name + ' is already exist!');
   };
 
-  componentDidUpdate() {
-    const { find, items, isLoading } = this.state;
-    if (find !== '' && items.length === 0 && !isLoading) {
-      perPage = 12;
-      this.apiService();
-    }
-    if (items.length > 12) {
-      window.scrollTo({
-        top: ScrollHeight,
-        behavior: 'smooth',
-      });
+  componentDidMount() {
+    const localContacts = JSON.parse(localStorage.getItem('contacts'));
+    if (localContacts != null) {
+      this.setState({ contacts: localContacts });
     }
   }
 
-  handeFindMore = () => {
-    perPage += perPage;
-    ScrollHeight = document.documentElement.scrollHeight - 140;
-    this.apiService();
-  };
-
+  componentDidUpdate() {
+    localStorage.clear();
+    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+  }
   render() {
     return (
-      <>
-        <Searchbar onSubmit={this.handleSubmit} />
-        <ImageGallery
-          className="ImageGallery"
-          items={this.state.items}
-          openModal={this.handleOpen}
+      <div>
+        <h1>Phonebook</h1>
+        <InputForm onSubmit={this.handleSubmit} />
+        <h2>Contacts</h2>
+        <Filter onFilter={this.handleFilter} />
+        <Contact
+          deleteCon={this.handleDelete}
+          contacts={this.state.contacts}
+          filterValue={this.state.filter}
         />
-        {this.state.isLoading && <Loader />}
-        {this.state.items.length > 0 && (
-          <Button findMore={this.handeFindMore} />
-        )}
-        {this.state.modalIsVisible && (
-          <Modal url={this.state.modalImage} closeModal={this.handleClose} />
-        )}
-      </>
+      </div>
     );
   }
 }
