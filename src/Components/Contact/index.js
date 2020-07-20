@@ -9,11 +9,11 @@ const Contact = ({ contacts, filterValue, deleteCon }) => {
 
   const filterForm = el => {
     return (
-      <li key={el.id} className="contactCard">
-        <p className="contactCard__name">{el.nam}: </p>
+      <li key={el.id} className="contact__item">
+        <p className="contact__item-name">{el.nam}: </p>
         <p>{el.number}</p>
         <button
-          className="contactCard__btn"
+          className="contact__item-btn"
           value={el.id}
           onClick={handleDelete}
         >

@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
-import './sass/main.scss';
 import Contact from './Components/Contact';
 import Filter from './Components/Filter';
 import InputForm from './Components/InputForm';
+import Wrapper from './Components/Wrapper';
 import { v1 as uuidv1 } from 'uuid';
+import './sass/main.scss';
+
 let key = '';
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      contacts: [],
-      filter: '',
-    };
-  }
+  state = {
+    contacts: [],
+    filter: '',
+  };
 
   handleDelete = key => {
     const newContacts = this.state.contacts.filter(el => el.id !== key);
@@ -59,7 +58,7 @@ class App extends Component {
   }
   render() {
     return (
-      <div>
+      <Wrapper>
         <h1>Phonebook</h1>
         <InputForm onSubmit={this.handleSubmit} />
         <h2>Contacts</h2>
@@ -69,7 +68,7 @@ class App extends Component {
           contacts={this.state.contacts}
           filterValue={this.state.filter}
         />
-      </div>
+      </Wrapper>
     );
   }
 }

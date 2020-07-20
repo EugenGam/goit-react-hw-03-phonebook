@@ -1,4 +1,4 @@
-.contactCard {
+.contact__item {
   font-size: 24px;
   display: flex;
   flex-direction: row;
@@ -10,7 +10,7 @@
   }
 }
 
-.contactCard::before {
+.contact__item::before {
   display: block;
   content: '';
   height: 8px;
@@ -21,7 +21,7 @@
   margin-right: 10px;
 }
 
-.contactCard__btn {
+.contact__item-btn {
   height: 24px;
   width: 65px;
   margin-left: 20px;
